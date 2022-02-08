@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.company.myapp.BoardMapper">
+<sql id="find">
+	<if test="findkey=='email'">AND EMAIL LIKE '%' || #{findvalue} ||'%' </if>
+	<if test="findkey=='subject'">AND SUBJECT LIKE '%' || #{findvalue} ||'%' </if>
+	<if test="findkey=='content'">AND CONTENT LIKE '%' || #{findvalue} ||'%' </if>
+	<if test="findkey=='subcon'">AND SUBJECT LIKE '%' || #{findvalue} ||'%'OR CONTENT LIKE '%' || #{findvalue} ||'%' </if>
+</sql>
+
+	<select id="selectList" resultType="Board">
+		SELECT * FROM(SELECT ROWNUM RNUM, B.*FROM (SELECT * FROM BOARD
+		WHERE 1=1 
+		<include refid="find"/>
+		ORDER BY BNUM DESC) B)WHERE RNUM BETWEEN #{startNum} AND #{endNum} 
+	</select>
+
+	<!-- 전체게시물수 -->
+	<select resultType="int" id="selectTotCnt">
+		SELECT COUNT(*) TOTCNT FROM BOARD
+		WHERE 1=1 
+	<include refid="find"/>
+	</select>
+	
+	
+	<select id="selectOne" resultType="Board">
+		SELECT * FROM BOARD
+		WHERE BNUM = #{bnum}
+	</select>
+	<insert id="insert">
+		<selectKey keyProperty="bnum" resultType="int" order="BEFORE">
+			SELECT B_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO BOARD(BNUM,EMAIL,SUBJECT,CONTENT,IP)
+		VALUES(B_SEQ.NEXTVAL, #{email},#{subject},#{content},#{ip})
+	</insert>
+	<update id="update">
+		UPDATE BOARD
+		SET EMAIL=#{email},
+		SUBJECT=#{subject},
+		CONTENT=#{content},
+		IP = #{ip}
+		WHERE BNUM = #{bnum}
+	</update>
+	<delete id="delete">
+		DELETE FROM BOARD
+		WHERE BNUM = #{bnum}
+	</delete>
+	<!-- 게시물 삭제시 removeyn을 y로 변경 -->
+	<update id="updateRemoveYn">
+		UPDATE BOARD
+		SET REMOVEYN = 'Y'
+		WHERE BNUM = #{bnum}
+	</update>
+	<!--좋아요+1  -->
+	<update id="updateLikeCnt">
+		UPDATE BOARD
+		SET LIKECNT = LIKECNT+1
+		WHERE BNUM =#{bnum}
+	</update>
+		<!--싫어요 +1  -->
+	<update id="updateDisLikeCnt">
+		UPDATE BOARD
+		SET DisLIKECNT = DisLIKECNT+1
+		WHERE BNUM =#{bnum}
+	</update>
+	<!--조회수 +1 -->
+	<update id="updateReadCnt">
+		UPDATE BOARD
+		SET READCNT = READCNT+1
+		WHERE BNUM =#{bnum}
+	</update>
+</mapper>

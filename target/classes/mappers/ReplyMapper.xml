@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.company.myapp.ReplyMapper">
+	<insert id="insert">
+		INSERT INTO REPLY(RNUM, BNUM, EMAIL, CONTENT, IP, RESTEP, RELEVEL)
+		VALUES (R_SEQ.NEXTVAL, #{bnum}, #{email}, #{content}, #{ip}, #{restep}, #{relevel})
+		 </insert>
+
+<!-- 글순서(RESTEP+1) -->
+	<update id="updateRestep">
+		UPDATE REPLY 
+		SET 
+		RESTEP = RESTEP + 1 
+		WHERE BNUM = #{bnum}
+		AND RESTEP >= #{restep}
+	</update>
+	<select id="selectList" resultType="Reply">
+		SELECT * FROM REPLY
+		WHERE BNUM = #{bnum}
+	
+	</select>
+	<delete id="delete">
+		DELETE FROM REPLY
+		WHERE RNUM = #{rnum}
+	</delete>
+	<update id="update">
+		UPDATE REPLY
+		SET CONTENT =#{content},
+		MODIDATE = SYSDATE
+		WHERE RNUM = #{rnum}
+	</update>
+</mapper>
