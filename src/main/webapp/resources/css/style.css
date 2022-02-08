@@ -1,0 +1,13 @@
+@charset "UTF-8";
+.aCurpage {
+	color:green;
+	font-size: 30px;
+}	
+.pagination a {
+  border-radius: 5px;
+}
+
+.pagination a.active {
+  border-radius: 5px;
+}
+
